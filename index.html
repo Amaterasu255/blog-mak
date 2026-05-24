@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Makima Edit Portfolio — Chainsaw Man aesthetic page">
+
+  <title>Makima — Edit Portfolio</title>
+
+  <!-- Fuentes: Cormorant Garamond (display serif) + DM Sans (sans legible) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@200;300;400&display=swap" rel="stylesheet">
+
+  <!-- Hoja de estilos separada -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Favicon (reemplaza con tu propio logo) -->
+  <!-- <link rel="icon" href="Logop.png" type="image/png"> -->
+
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════════════════════
+       CURSOR PERSONALIZADO
+       Dos capas: punto rojo (cursor) + anillo con inercia (ring)
+       Ambos animados en JS al final del documento
+       ══════════════════════════════════════════════════════ -->
+  <div id="cursor"></div>
+  <div id="cursor-ring"></div>
+
+  <!-- ══════════════════════════════════════════════════════
+       ELEMENTOS DE FONDO FIJOS
+       Orden de z-index: grid(0) → partículas(1) → contenido(10+)
+       ══════════════════════════════════════════════════════ -->
+  <div class="bg-grid"></div>            <!-- rejilla de líneas CSS -->
+  <canvas id="particles-canvas"></canvas> <!-- partículas rojas flotantes -->
+
+  <!-- Barra de progreso de scroll (top del viewport) -->
+  <div id="progress"></div>
+
+  <!-- ══════════════════════════════════════════════════════
+       PANTALLA DE INTRODUCCIÓN
+       Bloquea el contenido hasta que el usuario hace clic.
+       Al hacer clic: desaparece + inicia música del archivo local.
+       ══════════════════════════════════════════════════════ -->
+  <div id="intro-screen">
+    <div class="intro-inner">
+      <span class="intro-eyebrow">sound enabled experience</span>
+
+      <!-- Botón circular pulsante -->
+      <button id="enter-btn">ENTER</button>
+
+      <span class="intro-eyebrow" style="letter-spacing:2px; font-size:9px;">
+        activa el sonido para la experiencia completa
+      </span>
+    </div>
+  </div>
+
+  <!-- Reproductor de audio local: invisible, controlado por JS -->
+  <!-- El archivo Hot_Girl.mp3 debe estar en la misma carpeta que index.html -->
+  <audio id="bg-audio" loop preload="auto">
+    <source src="Daddy_Issues.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- ══════════════════════════════════════════════════════
+       NAVEGACIÓN FIJA
+       Los hrefs apuntan a los IDs de cada sección
+       ══════════════════════════════════════════════════════ -->
+  <nav>
+    <a href="#hero" class="nav-logo">Makima</a>
+    <ul class="nav-links">
+      <li><a href="#featured">Edit</a></li>
+      <li><a href="#reflection">Makima</a></li>
+      <li><a href="#quotes">Quotes</a></li>
+      <li><a href="#gallery">Gallery</a></li>
+      <li><a href="#social">Redes</a></li>
+    </ul>
+  </nav>
+
+  <!-- ══════════════════════════════════════════════════════
+       SECCIÓN 1 — HERO
+       Primera pantalla completa (100dvh).
+       El título se mueve en parallax con el scroll (JS).
+       ══════════════════════════════════════════════════════ -->
+  <section id="hero">
+
+    <!-- Glow rojo detrás del título, animado con CSS -->
+    <div class="hero-bg-glow"></div>
+
+    <span class="hero-eyebrow">Chainsaw Man — Edit Portfolio</span>
+
+    <h1 class="hero-title">
+      MAKIMA
+      <em>control · silence</em>
+    </h1>
+
+    <!-- Línea vertical decorativa -->
+    <div class="hero-line"></div>
+
+    <p class="hero-sub">
+      Entre sombras azuladas y el ruido silencioso de la madrugada.
+      Una atmósfera íntima que parece sacada de un recuerdo imposible de repetir.
+    </p>
+
+    <!-- Indicador visual de "haz scroll" -->
+    <div class="scroll-hint">
+      <div class="scroll-mouse"></div>
+      <span>Scroll</span>
+    </div>
+
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════
+       SECCIÓN 2 — IMAGEN PRINCIPAL (Edit destacado)
+       La imagen enlaza al video de TikTok.
+       El contenedor tiene parallax leve (data-speed en JS).
+       ══════════════════════════════════════════════════════ -->
+  <section id="featured">
+    <div class="frame-wrap parallax" data-speed="0.04">
+
+      <!-- Etiqueta superior izquierda -->
+      <span class="frame-label">Edit 001 — Featured</span>
+
+      <!--
+        PERSONALIZA AQUÍ:
+        href  → enlace a tu video de TikTok
+        src   → URL directa de tu imagen (Pinterest, Imgur, etc.)
+      -->
+      <a
+        href="https://www.tiktok.com/@caesena.ls/video/7641800985324621074"
+        target="_blank"
+        class="image-frame"
+      >
+        <img
+          src="https://i.pinimg.com/736x/8b/07/cc/8b07cc609db1ff0488b3058dac57f233.jpg"
+          alt="Makima — Edit principal"
+          loading="lazy"
+        >
+        <!-- Texto que aparece al hover -->
+        <div class="overlay"><span>Ver en TikTok</span></div>
+      </a>
+
+      <!-- Meta inferior derecha: canción del edit -->
+      <span class="frame-meta">Daddy Issues ·  The Neighbourhood</span>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════
+       SECCIÓN 3 — REFLEXIÓN DE MAKIMA
+       Texto filosófico original: cómo ella ve la sociedad
+       y a las personas que la componen.
+       Clase .visible se agrega por IntersectionObserver (JS).
+       ══════════════════════════════════════════════════════ -->
+  <section id="reflection">
+    <div class="reflection-inner">
+
+      <!-- Comilla decorativa grande -->
+      <span class="reflection-mark" aria-hidden="true">"</span>
+
+      <p class="reflection-body">
+        La sociedad no es un conjunto de personas libres.
+        Es una cadena invisible donde cada eslabón cree que es el más fuerte,
+        sin notar que algo — o alguien — lo sostiene desde arriba.
+        Los humanos llaman a eso destino, suerte, mérito.
+        Yo lo llamo control.<br><br>
+
+        Observo a las personas como observo el humo:
+        se mueven, toman forma, creen que deciden hacia dónde van.
+        Pero el viento siempre precede a su dirección.
+        Lo que llaman voluntad es solo la ilusión más elaborada que han construido
+        para no enfrentar que son predecibles.<br><br>
+
+        No los desprecio por eso. Los comprendo.
+        Y comprender es la forma más absoluta de poder
+        que puede existir sobre alguien.
+        No necesitas cadenas cuando conoces los miedos.
+        No necesitas gritar cuando sabes exactamente
+        qué silencio los quiebra.
+      </p>
+
+      <!-- Firma / atribución -->
+      <div class="reflection-sig">
+        <span>Makima — sobre la naturaleza del control</span>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════
+       SECCIÓN 4 — FRASES Y MÁXIMAS
+       Divididas en dos bloques:
+       A) Citas del manga (originales del personaje)
+       B) Máximas aplicables en la vida real (en clase .maxim)
+       Cada .quote-item comienza invisible y se revela con
+       IntersectionObserver al entrar en el viewport.
+       ══════════════════════════════════════════════════════ -->
+  <section id="quotes">
+    <div class="quotes-inner">
+
+      <!-- ── BLOQUE A: Citas del manga ── -->
+      <div class="section-tag"><span>Frases del personaje</span></div>
+
+      <div class="quote-item">
+        <div class="quote-num">01</div>
+        <div>
+          <p class="quote-text">
+            "Los perros obedecen a su amo.
+            Yo simplemente soy tu amo."
+          </p>
+          <span class="quote-source">Chainsaw Man — Cap. 32</span>
+        </div>
+      </div>
+
+      <div class="quote-item">
+        <div class="quote-num">02</div>
+        <div>
+          <p class="quote-text">
+            "El que mata al hombre de la motosierra obtiene su poder.
+            Eso es todo lo que necesitas saber."
+          </p>
+          <span class="quote-source">Chainsaw Man — Cap. 75</span>
+        </div>
+      </div>
+
+      <div class="quote-item">
+        <div class="quote-num">03</div>
+        <div>
+          <p class="quote-text">
+            "Todo lo que existe puede ser controlado.
+            La cuestión es saber cuánto estás dispuesto a perder."
+          </p>
+          <span class="quote-source">Chainsaw Man — Cap. 84</span>
+        </div>
+      </div>
+
+      <div class="quote-item">
+        <div class="quote-num">04</div>
+        <div>
+          <p class="quote-text">
+            "No te pido que me ames.
+            Te pido que me obedezcas."
+          </p>
+          <span class="quote-source">Chainsaw Man — Cap. 50</span>
+        </div>
+      </div>
+
+      <!-- ── BLOQUE B: Máximas aplicables en la vida real ──
+           Escritas como si Makima existiera y hablara directamente.
+           Clase extra .maxim cambia el estilo visual para distinguirlas.
+      ── -->
+      <div class="section-tag" style="margin-top: 80px;">
+        <span>Si Makima existiera — máximas para la vida real</span>
+      </div>
+
+      <div class="quote-item maxim">
+        <div class="quote-num">I</div>
+        <div>
+          <p class="quote-text">
+            "Aprende a necesitar poco de los demás.
+            Quien no necesita nada de ti no puede ser controlado por ti,
+            y esa persona siempre será más peligrosa que cualquier enemigo declarado."
+          </p>
+          <span class="quote-source">Sobre la dependencia y el poder personal</span>
+        </div>
+      </div>
+
+      <div class="quote-item maxim">
+        <div class="quote-num">II</div>
+        <div>
+          <p class="quote-text">
+            "Cuando entres a una habitación, observa primero.
+            El que habla más no es quien decide.
+            El poder real siempre está en el más callado."
+          </p>
+          <span class="quote-source">Sobre leer el entorno y las personas</span>
+        </div>
+      </div>
+
+      <div class="quote-item maxim">
+        <div class="quote-num">III</div>
+        <div>
+          <p class="quote-text">
+            "No expliques tus decisiones.
+            Justificarte es pedirle permiso a quienes ya están por debajo de ti."
+          </p>
+          <span class="quote-source">Sobre autoridad y presencia</span>
+        </div>
+      </div>
+
+      <div class="quote-item maxim">
+        <div class="quote-num">IV</div>
+        <div>
+          <p class="quote-text">
+            "Mantén tu rostro en calma incluso cuando ardes por dentro.
+            El caos controlado intimida más que cualquier grito."
+          </p>
+          <span class="quote-source">Sobre inteligencia emocional y presencia</span>
+        </div>
+      </div>
+
+      <div class="quote-item maxim">
+        <div class="quote-num">V</div>
+        <div>
+          <p class="quote-text">
+            "Rodéate solo de quienes elevan el nivel.
+            La lealtad sin capacidad es solo peso
+            disfrazado de afecto."
+          </p>
+          <span class="quote-source">Sobre vínculos y exigencia personal</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════
+       SECCIÓN 5 — GALERÍA DE EDITS
+       Grid asimétrico de 12 columnas.
+       PERSONALIZA: reemplaza los src de las imágenes
+       con tus propios edits subidos a Pinterest / Imgur.
+       ══════════════════════════════════════════════════════ -->
+  <section id="gallery">
+
+    <div class="gallery-header">
+      <h2 class="gallery-title">Gallery</h2>
+      <span class="gallery-count">005 edits</span>
+    </div>
+
+    <div class="gallery-grid">
+
+      <!-- Edit 001 — columna 5 (la más grande) -->
+      <div class="g-item">
+        <img
+          src="https://i.pinimg.com/736x/d8/2f/e2/d82fe2d000ae08e9539b52feb4ac06e8.jpg"
+          alt="Edit 001 — Makima"
+          loading="lazy"
+        >
+        <div class="g-overlay"></div>
+        <span class="g-tag">Edit 001</span>
+      </div>
+
+      <!--
+        Edits 002–005:
+        Reemplaza el src principal y el onerror con tus imágenes.
+        El onerror es un fallback por si la URL falla.
+      -->
+
+      <div class="g-item">
+        <img
+          src="https://i.pinimg.com/736x/0f/6d/5c/0f6d5cf101805b4b14554163caa422e5.jpg"
+          onerror="this.src='https://i.pinimg.com/736x/8b/07/cc/8b07cc609db1ff0488b3058dac57f233.jpg'"
+          alt="Edit 002 — Makima"
+          loading="lazy"
+        >
+        <div class="g-overlay"></div>
+        <span class="g-tag">Edit 002</span>
+      </div>
+
+      <div class="g-item">
+        <img
+          src="https://i.pinimg.com/736x/54/f3/d8/54f3d810b350a974448559a2b50b85cf.jpg"
+          onerror="this.src='https://i.pinimg.com/736x/8b/07/cc/8b07cc609db1ff0488b3058dac57f233.jpg'"
+          alt="Edit 003 — Makima"
+          loading="lazy"
+        >
+        <div class="g-overlay"></div>
+        <span class="g-tag">Edit 003</span>
+      </div>
+
+      <div class="g-item">
+        <img
+          src="https://i.pinimg.com/736x/1e/5e/88/1e5e88c812f284ba126b595f62181c4a.jpg"
+          onerror="this.src='https://i.pinimg.com/736x/8b/07/cc/8b07cc609db1ff0488b3058dac57f233.jpg'"
+          alt="Edit 004 — Makima"
+          loading="lazy"
+        >
+        <div class="g-overlay"></div>
+        <span class="g-tag">Edit 004</span>
+      </div>
+
+      <!-- Edit 005 — ocupa 8 columnas (apaisado, cierra la galería) -->
+      <div class="g-item">
+        <img
+          src="https://i.pinimg.com/736x/6e/91/f1/6e91f1fcae467543071711972dfe89b9.jpg"
+          onerror="this.src='https://i.pinimg.com/736x/8b/07/cc/8b07cc609db1ff0488b3058dac57f233.jpg'"
+          alt="Edit 005 — Makima"
+          loading="lazy"
+        >
+        <div class="g-overlay"></div>
+        <span class="g-tag">Edit 005</span>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════
+       SECCIÓN 6 — REDES SOCIALES
+       PERSONALIZA: cambia los href y los .slink-handle
+       con tus usuarios reales en cada plataforma.
+       ══════════════════════════════════════════════════════ -->
+  <section id="social">
+    <div class="social-inner">
+
+      <h2 class="social-title">Sígueme</h2>
+      <p class="social-sub">Más edits, más contenido, más Makima.</p>
+
+      <div class="social-links">
+
+        <!-- TikTok — PERSONALIZA href y handle -->
+        <a href="https://www.tiktok.com/@caesena.ls" target="_blank" class="slink">
+          <div class="slink-icon">
+            <!-- Ícono SVG de TikTok -->
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5
+                       2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01
+                       a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34
+                       6.34 6.34 0 0 0 6.33-6.34V8.73a8.17 8.17 0 0 0 4.77 1.52V6.79a4.85 4.85 0 0 1-1-.1z"/>
+            </svg>
+          </div>
+          <div class="slink-info">
+            <span class="slink-platform">TikTok</span>
+            <span class="slink-handle">@caesena.ls</span>
+          </div>
+        </a>
+
+        <!-- Instagram — PERSONALIZA href y handle -->
+        <a href="https://www.instagram.com/" target="_blank" class="slink">
+          <div class="slink-icon">
+            <!-- Ícono SVG de Instagram -->
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919
+                       .058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664
+                       4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07
+                       -3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849
+                       0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919
+                       1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072
+                       -4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948
+                       0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98
+                       1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072
+                       4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948
+                       0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98
+                       -1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162
+                       s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162z
+                       m0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4
+                       c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44
+                       s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+            </svg>
+          </div>
+          <div class="slink-info">
+            <span class="slink-platform">Instagram</span>
+            <span class="slink-handle">@tu_usuario</span> <!-- PERSONALIZA -->
+          </div>
+        </a>
+
+        <!-- YouTube / track — enlace a la canción del edit -->
+        <a href="https://youtu.be/jKIK__j1Nno?si=BncLrVdQ3giuGbXm" target="_blank" class="slink">
+          <div class="slink-icon">
+            <!-- Ícono SVG de YouTube -->
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M23.495 6.205a3.007 3.007 0 0 0-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501
+                       s-7.507-.01-9.396.501A3.007 3.007 0 0 0 .527 6.205a31.247 31.247 0 0 0-.522
+                       5.805 31.247 31.247 0 0 0 .522 5.783 3.007 3.007 0 0 0 2.088 2.088
+                       c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 0 0
+                       2.088-2.088 31.247 31.247 0 0 0 .5-5.783 31.247 31.247 0 0 0-.5-5.805z
+                       M9.609 15.601V8.408l6.264 3.602z"/>
+            </svg>
+          </div>
+          <div class="slink-info">
+            <span class="slink-platform">YouTube</span>
+            <span class="slink-handle">Ver el track original</span>
+          </div>
+        </a>
+
+      </div><!-- /.social-links -->
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════
+       REPRODUCTOR FIJO (esquina inferior izquierda)
+       Aparece después del clic en ENTER.
+       Botón #toggle-btn alterna play/pause del video de YT.
+       ══════════════════════════════════════════════════════ -->
+  <div id="player-bar">
+
+    <!-- Barras animadas visualizando "audio" -->
+    <div class="bars" aria-hidden="true">
+      <span></span><span></span><span></span><span></span>
+    </div>
+
+    <div class="player-info">
+      <span class="player-label">now playing</span>
+      <!-- PERSONALIZA: nombre del track -->
+      <span class="player-name">Daddy_Issues — Neighbourhood</span>
+    </div>
+
+    <!-- Botón de play/pause — estado gestionado en JS -->
+    <button class="player-btn" id="toggle-btn" aria-label="Play o Pause">▐▐</button>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       FOOTER
+       ══════════════════════════════════════════════════════ -->
+  <footer>
+    <span class="footer-logo">Makima</span>
+    <span class="footer-copy">© 2025 — edit portfolio</span>
+  </footer>
+
+  <!-- ══════════════════════════════════════════════════════
+       JAVASCRIPT
+       Orden de ejecución:
+       1. Cursor personalizado (punto + anillo con inercia)
+       2. Barra de progreso de scroll
+       3. Partículas flotantes (canvas)
+       4. Parallax suave en .parallax y hero title
+       5. Scroll reveal con IntersectionObserver
+       6. YouTube IFrame API (música de fondo)
+       7. Lógica del botón ENTER e intro screen
+       8. Toggle play/pause del player
+       ══════════════════════════════════════════════════════ -->
+  <script>
+
+    /* ── 1. CURSOR PERSONALIZADO ──────────────────────────── */
+    const cur  = document.getElementById('cursor');
+    const ring = document.getElementById('cursor-ring');
+    let mx = 0, my = 0;   // posición real del mouse
+    let rx = 0, ry = 0;   // posición del anillo (con inercia)
+
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      // Punto central: sigue al instante
+      cur.style.transform = `translate(${mx - 4}px, ${my - 4}px)`;
+    });
+
+    // Anillo exterior: animación con lerp (interpolación lineal)
+    function animRing() {
+      rx += (mx - rx - 16) * .12;
+      ry += (my - ry - 16) * .12;
+      ring.style.transform = `translate(${rx}px, ${ry}px)`;
+      requestAnimationFrame(animRing);
+    }
+    animRing();
+
+
+    /* ── 2. BARRA DE PROGRESO DE SCROLL ──────────────────── */
+    const prog = document.getElementById('progress');
+
+    window.addEventListener('scroll', () => {
+      const scrolled = document.documentElement.scrollTop;
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      prog.style.width = (scrolled / maxScroll * 100) + '%';
+    }, { passive: true });
+
+
+    /* ── 3. PARTÍCULAS FLOTANTES (CANVAS) ──────────────────
+       Pequeños puntos rojos que suben lentamente.
+       Cada partícula: posición aleatoria, vida limitada,
+       fade-in y fade-out suave.
+    ── */
+    const canvas = document.getElementById('particles-canvas');
+    const ctx    = canvas.getContext('2d');
+    let W, H;
+
+    function resizeCanvas() {
+      W = canvas.width  = window.innerWidth;
+      H = canvas.height = window.innerHeight;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    class Particle {
+      constructor() { this.reset(); }
+
+      reset() {
+        this.x           = Math.random() * W;
+        this.y           = Math.random() * H;
+        this.vx          = (Math.random() - .5) * .25;   // deriva horizontal leve
+        this.vy          = -(Math.random() * .4 + .1);   // siempre sube
+        this.alpha       = 0;
+        this.targetAlpha = Math.random() * .25 + .05;
+        this.size        = Math.random() * 1.5 + .3;
+        this.life        = 0;
+        this.maxLife     = Math.random() * 300 + 200;
+      }
+
+      update() {
+        this.life++;
+        // Fade in primeros 60 frames
+        if (this.life < 60)
+          this.alpha += (this.targetAlpha - this.alpha) * .05;
+        // Fade out últimos 60 frames
+        if (this.life > this.maxLife - 60)
+          this.alpha *= .94;
+        // Renace si muere o sale por arriba
+        if (this.life > this.maxLife || this.y < -10)
+          this.reset();
+
+        this.x += this.vx;
+        this.y += this.vy;
+      }
+
+      draw() {
+        ctx.save();
+        ctx.globalAlpha = this.alpha;
+        ctx.fillStyle   = '#b52b2b';
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    // Crear 55 partículas con vida inicial aleatoria (evitar aparición simultánea)
+    const particles = [];
+    for (let i = 0; i < 55; i++) {
+      const p = new Particle();
+      p.life = Math.random() * p.maxLife; // vida inicial aleatoria
+      particles.push(p);
+    }
+
+    function animParticles() {
+      ctx.clearRect(0, 0, W, H);
+      particles.forEach(p => { p.update(); p.draw(); });
+      requestAnimationFrame(animParticles);
+    }
+    animParticles();
+
+
+    /* ── 4. PARALLAX SUAVE ────────────────────────────────── */
+    const parallaxEls  = document.querySelectorAll('.parallax');
+    const heroTitle    = document.querySelector('.hero-title');
+    const reflBody     = document.querySelector('.reflection-body');
+    let scrollYTarget  = 0;
+    let scrollYCurrent = 0;
+
+    window.addEventListener('scroll', () => {
+      scrollYTarget = window.scrollY;
+    }, { passive: true });
+
+    function smoothParallax() {
+      // Lerp del scroll — crea inercia visual
+      scrollYCurrent += (scrollYTarget - scrollYCurrent) * .08;
+
+      // Parallax de elementos marcados con .parallax y data-speed
+      parallaxEls.forEach(el => {
+        const speed = parseFloat(el.dataset.speed) || .05;
+        el.style.transform = `translateY(${scrollYCurrent * speed}px)`;
+      });
+
+      // Parallax del título hero (flota más rápido que el scroll)
+      if (heroTitle)
+        heroTitle.style.transform = `translateY(${scrollYTarget * .18}px)`;
+
+      requestAnimationFrame(smoothParallax);
+    }
+    smoothParallax();
+
+
+    /* ── 5. SCROLL REVEAL (IntersectionObserver) ──────────── */
+    // Agrega .visible a elementos cuando entran en el viewport
+    const revealTargets = document.querySelectorAll(
+      '.quote-item, .g-item, .reflection-body'
+    );
+
+    const revealObserver = new IntersectionObserver(entries => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          // Retraso escalonado para múltiples elementos simultáneos
+          setTimeout(() => entry.target.classList.add('visible'), i * 90);
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: .12 });
+
+    revealTargets.forEach(el => revealObserver.observe(el));
+
+
+    /* ── 6. AUDIO LOCAL (HTML5 Audio API) ────────────────────
+       Reproduce Hot_Girl.mp3 directamente desde el archivo local.
+       — Sin dependencia de YouTube ni conexión externa.
+       — loop automático activado en el elemento <audio>.
+       — Volumen al 35% para no dominar la experiencia visual.
+       El link de YouTube en la sección Redes queda como crédito
+       al track original, no como fuente de audio.
+    ── */
+    const bgAudio  = document.getElementById('bg-audio');
+    let isPlaying  = true;
+
+    // Volumen inicial suave
+    bgAudio.volume = 1.00;
+
+
+    /* ── 7. INTRO: botón ENTER ────────────────────────────── */
+    const introScreen = document.getElementById('intro-screen');
+    const enterBtn    = document.getElementById('enter-btn');
+    const playerBar   = document.getElementById('player-bar');
+
+    enterBtn.addEventListener('click', () => {
+      // Desvanece la pantalla de intro
+      introScreen.classList.add('hide');
+
+      // Después de la transición: muestra el player e inicia música
+      setTimeout(() => {
+        playerBar.classList.add('show');
+        // .play() retorna una Promise — manejamos el error por si el
+        // navegador bloquea audio sin interacción previa (no debería
+        // ocurrir porque el clic en ENTER cuenta como interacción)
+        bgAudio.play().catch(err => console.warn('Audio bloqueado:', err));
+      }, 800);
+    });
+
+
+    /* ── 8. TOGGLE PLAY / PAUSE ───────────────────────────── */
+    const toggleBtn = document.getElementById('toggle-btn');
+
+    toggleBtn.addEventListener('click', () => {
+      if (isPlaying) {
+        bgAudio.pause();
+        toggleBtn.textContent = '▶';  // ícono de play
+      } else {
+        bgAudio.play();
+        toggleBtn.textContent = '▐▐'; // ícono de pause
+      }
+      isPlaying = !isPlaying;
+    });
+
+  </script>
+
+</body>
+</html>

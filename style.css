@@ -1,0 +1,951 @@
+/* =========================================================
+   MAKIMA — EDIT PORTFOLIO
+   style.css
+   Paleta: negro profundo · vino · rojo · hueso
+   Tipografía: Cormorant Garamond (serif) + DM Sans (sans)
+   ========================================================= */
+
+/* ── VARIABLES GLOBALES ───────────────────────────────── */
+:root {
+  --bg:       #0a0505;          /* fondo base, casi negro */
+  --wine:     #6b1a1a;          /* vino oscuro, acento secundario */
+  --red:      #a82525;          /* rojo principal de acento */
+  --red-glow: rgba(168,37,37,.18);
+  --bone:     #ede3d8;          /* blanco cálido / hueso */
+  --text:     #f0e9e3;          /* texto principal */
+  --muted:    #9e8e86;          /* texto secundario / etiquetas */
+  --dim:      rgba(255,255,255,.06);
+  --line:     rgba(255,255,255,.07); /* bordes sutiles */
+}
+
+/* ── RESET BÁSICO ─────────────────────────────────────── */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html { scroll-behavior: smooth; }
+
+/* ── CURSOR PERSONALIZADO (solo desktop) ──────────────── */
+body { cursor: none; }
+
+/* Punto central rojo */
+#cursor {
+  position: fixed;
+  width: 8px; height: 8px;
+  background: var(--red);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 99999;
+  transition: transform .15s ease, opacity .3s ease;
+  mix-blend-mode: screen;
+}
+
+/* Anillo exterior que sigue con inercia (animado en JS) */
+#cursor-ring {
+  position: fixed;
+  width: 32px; height: 32px;
+  border: 1px solid rgba(168,37,37,.4);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 99998;
+  transition: transform .35s cubic-bezier(.25,.46,.45,.94),
+              width .3s, height .3s, border-color .3s;
+  transform: translate(-12px, -12px);
+}
+
+/* Anillo se expande al pasar por enlaces o botones */
+body:has(a:hover) #cursor-ring,
+body:has(button:hover) #cursor-ring {
+  width: 52px; height: 52px;
+  border-color: rgba(168,37,37,.7);
+  transform: translate(-22px, -22px);
+}
+
+/* ── BODY BASE ────────────────────────────────────────── */
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 300;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Capa de grain (ruido de película) sobre todo el sitio */
+body::after {
+  content: "";
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9000;
+  opacity: .6;
+}
+
+/* Viñeta radial: oscurece bordes para enfocar el centro */
+body::before {
+  content: "";
+  position: fixed; inset: 0;
+  background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,.65) 100%);
+  pointer-events: none;
+  z-index: 8999;
+}
+
+/* ── FONDO: REJILLA DE LÍNEAS ─────────────────────────── */
+.bg-grid {
+  position: fixed; inset: 0;
+  background:
+    repeating-linear-gradient(90deg,  transparent 0, transparent 88px, var(--line) 89px),
+    repeating-linear-gradient(0deg,   transparent 0, transparent 88px, rgba(255,255,255,.03) 89px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── CANVAS DE PARTÍCULAS ─────────────────────────────── */
+/* Las partículas rojas flotan hacia arriba (animadas en JS) */
+#particles-canvas {
+  position: fixed; inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ── BARRA DE PROGRESO DE SCROLL ──────────────────────── */
+#progress {
+  position: fixed;
+  top: 0; left: 0;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--red), rgba(168,37,37,.3));
+  z-index: 9998;
+  transition: width .1s linear;
+}
+
+/* ── NAVEGACIÓN FIJA ──────────────────────────────────── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 500;
+  padding: 22px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Degradado superior para que la nav no corte el fondo */
+nav::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: linear-gradient(to bottom, rgba(10,5,5,.85), transparent);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.nav-logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px;
+  font-weight: 300;
+  color: var(--bone);
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.nav-links {
+  display: flex;
+  gap: 32px;
+  list-style: none;
+}
+
+.nav-links a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  transition: color .3s;
+}
+.nav-links a:hover { color: var(--bone); }
+
+/* Todas las secciones sobre los elementos de fondo */
+section { position: relative; z-index: 10; }
+
+/* ============================================================
+   SECCIÓN: INTRO (pantalla de entrada)
+   Aparece al cargar — desaparece al hacer clic en ENTER
+   ============================================================ */
+#intro-screen {
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(120,30,30,.2), transparent 50%),
+    #060202;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9997;
+  transition: opacity 1.2s cubic-bezier(.77,0,.175,1);
+}
+#intro-screen.hide { opacity: 0; pointer-events: none; }
+
+.intro-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+}
+
+.intro-eyebrow {
+  font-size: 10px;
+  letter-spacing: 7px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.3);
+}
+
+/* Botón circular pulsante */
+#enter-btn {
+  position: relative;
+  width: 148px; height: 148px;
+  border-radius: 50%;
+  border: 1px solid rgba(168,37,37,.25);
+  background: radial-gradient(circle at center, rgba(168,37,37,.12), transparent);
+  color: var(--bone);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 26px;
+  letter-spacing: 3px;
+  cursor: none;
+  transition: transform .5s ease, box-shadow .5s ease, border-color .5s;
+  box-shadow: 0 0 50px rgba(168,37,37,.1), inset 0 0 30px rgba(168,37,37,.05);
+}
+
+/* Anillo de pulso externo */
+#enter-btn::before {
+  content: "";
+  position: absolute; inset: -10px;
+  border-radius: 50%;
+  border: 1px solid rgba(168,37,37,.08);
+  animation: pulseRing 2.5s infinite ease-out;
+}
+
+#enter-btn:hover {
+  transform: scale(1.06);
+  border-color: rgba(168,37,37,.5);
+  box-shadow: 0 0 80px rgba(168,37,37,.25), inset 0 0 40px rgba(168,37,37,.1);
+}
+
+@keyframes pulseRing {
+  0%   { transform: scale(1);   opacity: .5; }
+  100% { transform: scale(1.4); opacity: 0;  }
+}
+
+/* ============================================================
+   SECCIÓN: HERO (primera pantalla completa)
+   ============================================================ */
+#hero {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 100px 40px 60px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Glow rojo animado detrás del título */
+.hero-bg-glow {
+  position: absolute;
+  top: -10%; left: 50%;
+  transform: translateX(-50%);
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(168,37,37,.12) 0%, transparent 70%);
+  pointer-events: none;
+  animation: glowPulse 6s ease-in-out infinite alternate;
+}
+
+@keyframes glowPulse {
+  from { opacity: .6; transform: translateX(-50%) scale(1);    }
+  to   { opacity: 1; transform: translateX(-50%) scale(1.15);  }
+}
+
+/* Etiqueta superior pequeña */
+.hero-eyebrow {
+  font-size: 10px;
+  letter-spacing: 8px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 20px;
+  opacity: 0;
+  animation: fadeUp .8s .3s ease forwards;
+}
+
+/* Título principal gigante */
+.hero-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(5rem, 14vw, 10rem);
+  font-weight: 300;
+  line-height: .88;
+  color: var(--bone);
+  letter-spacing: -2px;
+  text-shadow: 0 0 40px rgba(168,37,37,.18);
+  opacity: 0;
+  animation: fadeUp .9s .5s ease forwards;
+}
+
+/* Subtítulo itálico dentro del h1 */
+.hero-title em {
+  font-style: italic;
+  color: rgba(237,227,216,.55);
+  font-size: .7em;
+  display: block;
+  letter-spacing: 4px;
+}
+
+/* Línea vertical decorativa entre título y texto */
+.hero-line {
+  width: 1px; height: 80px;
+  background: linear-gradient(to bottom, transparent, var(--red), transparent);
+  margin: 40px auto;
+  opacity: 0;
+  animation: fadeUp .8s .8s ease forwards;
+}
+
+/* Párrafo descriptivo bajo la línea */
+.hero-sub {
+  max-width: 460px;
+  font-size: 13px;
+  line-height: 1.9;
+  color: var(--muted);
+  letter-spacing: .3px;
+  opacity: 0;
+  animation: fadeUp .8s 1s ease forwards;
+}
+
+/* ── INDICADOR DE SCROLL ──────────────────────────────── */
+.scroll-hint {
+  position: absolute;
+  bottom: 35px; left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  opacity: 0;
+  animation: fadeUp .8s 1.4s ease forwards;
+}
+
+.scroll-hint span {
+  font-size: 9px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.2);
+}
+
+/* Caja del mouse */
+.scroll-mouse {
+  width: 22px; height: 36px;
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 12px;
+  display: flex;
+  justify-content: center;
+  padding-top: 6px;
+}
+
+/* Ruedita que baja y desaparece */
+.scroll-mouse::before {
+  content: "";
+  width: 2px; height: 8px;
+  background: var(--red);
+  border-radius: 2px;
+  animation: scrollWheel 1.8s infinite ease-in-out;
+}
+
+@keyframes scrollWheel {
+  0%   { transform: translateY(0);    opacity: 1; }
+  100% { transform: translateY(10px); opacity: 0; }
+}
+
+/* ============================================================
+   SECCIÓN: IMAGEN PRINCIPAL (edit destacado)
+   ============================================================ */
+#featured {
+  padding: 0 40px 120px;
+  display: flex;
+  justify-content: center;
+}
+
+/* Contenedor relativo para etiquetas arriba/abajo */
+.frame-wrap {
+  position: relative;
+  width: min(460px, 90vw);
+}
+
+.frame-label {
+  position: absolute;
+  top: -28px; left: 0;
+  font-size: 9px;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* Marco de la imagen — también es enlace a TikTok */
+.image-frame {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid rgba(255,255,255,.07);
+  text-decoration: none;
+}
+
+/* Capa de color rojo diagonal sobre la imagen */
+.image-frame::before {
+  content: "";
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(168,37,37,.25) 0%, transparent 40%, transparent 60%, rgba(168,37,37,.15) 100%);
+  z-index: 2;
+  transition: opacity .6s;
+}
+
+/* Filtros de imagen para coherencia estética */
+.image-frame img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform 1s cubic-bezier(.25,.46,.45,.94), filter .6s;
+  filter: brightness(.88) contrast(1.06) saturate(.9) sepia(.08);
+  will-change: transform;
+}
+
+.image-frame:hover img {
+  transform: scale(1.05);
+  filter: brightness(.96) contrast(1.1) saturate(1.05);
+}
+
+/* Overlay negro semitransparente con texto al hover */
+.overlay {
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: .4s ease;
+  z-index: 3;
+}
+
+.overlay span {
+  border: 1px solid rgba(255,255,255,.18);
+  padding: 13px 26px;
+  backdrop-filter: blur(8px);
+  color: white;
+  font-size: 11px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+}
+
+.image-frame:hover .overlay { opacity: 1; }
+
+/* Meta info debajo del frame: canción */
+.frame-meta {
+  position: absolute;
+  bottom: -28px; right: 0;
+  font-size: 9px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.18);
+}
+
+/* ============================================================
+   SECCIÓN: REFLEXIÓN DE MAKIMA
+   Texto filosófico sobre su visión del mundo y la sociedad
+   ============================================================ */
+#reflection {
+  padding: 120px 40px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Línea roja vertical decorativa a la izquierda */
+#reflection::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 1px;
+  background: linear-gradient(to bottom, transparent, var(--red) 30%, var(--red) 70%, transparent);
+  opacity: .3;
+}
+
+.reflection-inner {
+  max-width: 780px;
+  margin: 0 auto;
+}
+
+/* Comilla decorativa grande */
+.reflection-mark {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 120px;
+  line-height: .6;
+  color: rgba(168,37,37,.12);
+  display: block;
+  margin-bottom: 20px;
+  user-select: none;
+}
+
+/* Bloque de texto principal de reflexión */
+.reflection-body {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+  font-weight: 300;
+  font-style: italic;
+  line-height: 1.75;
+  color: var(--bone);
+  margin-bottom: 40px;
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity .9s ease, transform .9s ease;
+}
+.reflection-body.visible { opacity: 1; transform: translateY(0); }
+
+/* Firma / atribución */
+.reflection-sig {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.reflection-sig::before {
+  content: "";
+  width: 24px; height: 1px;
+  background: var(--red);
+}
+.reflection-sig span {
+  font-size: 10px;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ============================================================
+   SECCIÓN: FRASES (quotes del personaje)
+   ============================================================ */
+#quotes {
+  padding: 100px 40px;
+  position: relative;
+  overflow: hidden;
+}
+
+.quotes-inner {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* Encabezado de sección con línea + texto */
+.section-tag {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 60px;
+}
+.section-tag::before {
+  content: "";
+  width: 30px; height: 1px;
+  background: var(--red);
+}
+.section-tag span {
+  font-size: 10px;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* Cada frase individual — empieza invisible y sube al entrar en viewport */
+.quote-item {
+  padding: 50px 0;
+  border-top: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: 60px 1fr;
+  gap: 30px;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity .8s ease, transform .8s ease;
+}
+.quote-item.visible { opacity: 1; transform: translateY(0); }
+
+/* Número de frase grande y translúcido */
+.quote-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 48px;
+  font-weight: 300;
+  color: rgba(168,37,37,.2);
+  line-height: 1;
+  padding-top: 4px;
+}
+
+/* Texto de la frase */
+.quote-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+  font-weight: 300;
+  font-style: italic;
+  color: var(--bone);
+  line-height: 1.4;
+  margin-bottom: 16px;
+}
+
+/* Fuente / capítulo */
+.quote-source {
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ── BLOQUE EXTRA: máximas aplicables en la vida real ──── */
+/* Enmarcadas diferente para distinguirlas de las citas del manga */
+.quote-item.maxim .quote-text {
+  font-style: normal;
+  color: var(--text);
+  font-size: clamp(1.2rem, 2.8vw, 1.8rem);
+  border-left: 1px solid rgba(168,37,37,.3);
+  padding-left: 24px;
+  margin-left: -24px;
+}
+.quote-item.maxim .quote-source {
+  color: rgba(168,37,37,.55);
+}
+
+/* ============================================================
+   SECCIÓN: GALERÍA DE EDITS
+   ============================================================ */
+#gallery { padding: 100px 40px; }
+
+.gallery-header {
+  max-width: 1200px;
+  margin: 0 auto 50px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.gallery-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 300;
+  color: var(--bone);
+}
+
+.gallery-count {
+  font-size: 10px;
+  letter-spacing: 4px;
+  color: var(--muted);
+  padding-bottom: 8px;
+}
+
+/* Grid asimétrico de 12 columnas — crea composición editorial */
+.gallery-grid {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 12px;
+}
+
+/* Cada celda de la galería */
+.g-item {
+  overflow: hidden;
+  position: relative;
+  background: rgba(255,255,255,.03);
+  cursor: none;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity .7s ease, transform .7s ease;
+}
+.g-item.visible { opacity: 1; transform: translateY(0); }
+
+/* Columnas de cada celda — layout asimétrico intencional */
+.g-item:nth-child(1) { grid-column: span 5; aspect-ratio: 3/4; }
+.g-item:nth-child(2) { grid-column: span 4; aspect-ratio: 3/4; }
+.g-item:nth-child(3) { grid-column: span 3; aspect-ratio: 3/4; }
+.g-item:nth-child(4) { grid-column: span 4; aspect-ratio: 4/5; }
+.g-item:nth-child(5) { grid-column: span 8; aspect-ratio: 16/9; }
+
+/* Imagen con filtros y zoom al hover */
+.g-item img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform 1.2s cubic-bezier(.25,.46,.45,.94), filter .6s;
+  filter: brightness(.85) saturate(.88) sepia(.1);
+}
+.g-item:hover img {
+  transform: scale(1.07);
+  filter: brightness(.95) saturate(1);
+}
+
+/* Degradado oscuro desde abajo al hacer hover */
+.g-item .g-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(10,5,5,.7) 0%, transparent 50%);
+  opacity: 0;
+  transition: opacity .4s;
+  z-index: 2;
+}
+.g-item:hover .g-overlay { opacity: 1; }
+
+/* Etiqueta "Edit 00X" que aparece en hover */
+.g-item .g-tag {
+  position: absolute;
+  bottom: 14px; left: 14px;
+  font-size: 9px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.5);
+  z-index: 3;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity .4s, transform .4s;
+}
+.g-item:hover .g-tag { opacity: 1; transform: translateY(0); }
+
+/* ============================================================
+   SECCIÓN: REDES SOCIALES
+   ============================================================ */
+#social { padding: 120px 40px; }
+
+.social-inner {
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.social-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  font-weight: 300;
+  color: var(--bone);
+  margin-bottom: 16px;
+  line-height: 1;
+}
+
+.social-sub {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 70px;
+  letter-spacing: .3px;
+}
+
+.social-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+}
+
+/* Tarjeta de red social */
+.slink {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 28px;
+  border: 1px solid rgba(255,255,255,.07);
+  background: rgba(255,255,255,.02);
+  text-decoration: none;
+  color: var(--text);
+  transition: border-color .4s, background .4s, transform .4s;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Gradiente rojo diagonal al hover */
+.slink::before {
+  content: "";
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(168,37,37,.08), transparent);
+  opacity: 0;
+  transition: opacity .4s;
+}
+.slink:hover {
+  border-color: rgba(168,37,37,.3);
+  background: rgba(168,37,37,.05);
+  transform: translateY(-3px);
+}
+.slink:hover::before { opacity: 1; }
+
+/* Ícono circular */
+.slink-icon {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: rgba(168,37,37,.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.slink-icon svg { width: 18px; height: 18px; fill: var(--red); }
+
+.slink-info { text-align: left; }
+.slink-platform {
+  font-size: 9px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: block;
+}
+.slink-handle {
+  font-size: 15px;
+  color: var(--bone);
+  letter-spacing: .3px;
+}
+
+/* ============================================================
+   REPRODUCTOR DE MÚSICA FIJO
+   Aparece después del ENTER — botón play/pause incluido
+   ============================================================ */
+#player-bar {
+  position: fixed;
+  bottom: 30px; left: 30px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 20px;
+  background: rgba(10,5,5,.88);
+  border: 1px solid rgba(255,255,255,.07);
+  backdrop-filter: blur(20px);
+  z-index: 400;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: transform .4s, opacity .4s;
+}
+#player-bar.show { opacity: 1; transform: translateY(0); }
+
+/* Barras de sonido animadas */
+.bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 20px;
+}
+.bars span {
+  width: 3px;
+  background: var(--red);
+  border-radius: 2px;
+  animation: barBounce 1s ease-in-out infinite;
+}
+.bars span:nth-child(1) { height: 8px;  animation-delay: 0s;  }
+.bars span:nth-child(2) { height: 18px; animation-delay: .2s; }
+.bars span:nth-child(3) { height: 11px; animation-delay: .4s; }
+.bars span:nth-child(4) { height: 16px; animation-delay: .1s; }
+
+@keyframes barBounce {
+  0%,100% { transform: scaleY(1);   opacity: .5; }
+  50%      { transform: scaleY(1.5); opacity: 1;  }
+}
+
+.player-info { line-height: 1.3; }
+.player-label {
+  font-size: 9px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.25);
+  display: block;
+}
+.player-name { font-size: 12px; color: var(--bone); }
+
+/* Botón circular de play/pause */
+.player-btn {
+  width: 28px; height: 28px;
+  background: none;
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 50%;
+  color: var(--muted);
+  cursor: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  transition: border-color .3s, color .3s;
+}
+.player-btn:hover { border-color: var(--red); color: var(--bone); }
+
+/* Iframe de YouTube — invisible, solo audio */
+#yt-player { position: absolute; opacity: 0; pointer-events: none; }
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+footer {
+  position: relative; z-index: 10;
+  padding: 60px 40px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer-logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 18px;
+  font-weight: 300;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.2);
+}
+.footer-copy {
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: rgba(255,255,255,.15);
+}
+
+/* ── ANIMACIÓN GLOBAL DE ENTRADA ──────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+/* Elementos con parallax — evitar repaints innecesarios */
+.parallax { will-change: transform; }
+
+/* ============================================================
+   RESPONSIVE — MÓVIL (≤768px)
+   ============================================================ */
+@media (max-width: 768px) {
+
+  /* Ocultar cursor personalizado en táctil */
+  body { cursor: auto; }
+  #cursor, #cursor-ring { display: none; }
+
+  nav { padding: 18px 20px; }
+  .nav-links { display: none; } /* Menú hamburguesa no implementado aún */
+
+  #hero { padding: 90px 20px 50px; }
+  .hero-title { letter-spacing: -1px; }
+
+  #featured { padding: 0 20px 80px; }
+
+  #reflection { padding: 70px 20px; }
+  .reflection-body { font-size: clamp(1.1rem, 4vw, 1.4rem); }
+
+  #quotes { padding: 70px 20px; }
+  .quote-item { grid-template-columns: 1fr; }
+  .quote-num { font-size: 32px; }
+
+  #gallery { padding: 70px 20px; }
+  .gallery-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  /* En móvil todos ocupan 1 columna, el último 2 */
+  .g-item:nth-child(1),
+  .g-item:nth-child(2),
+  .g-item:nth-child(3),
+  .g-item:nth-child(4) { grid-column: span 1; aspect-ratio: 3/4; }
+  .g-item:nth-child(5) { grid-column: span 2; aspect-ratio: 16/9; }
+
+  #social { padding: 80px 20px; }
+  .social-links { flex-direction: column; align-items: center; }
+  .slink { width: 100%; max-width: 340px; }
+
+  footer { flex-direction: column; gap: 12px; text-align: center; }
+
+  /* Player ocupa todo el ancho en móvil */
+  #player-bar { bottom: 20px; left: 20px; right: 20px; }
+}
